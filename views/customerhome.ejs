@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>customer</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <input type="string" id="fname" name="user" value="Vasuki">
+
+    <div>
+      <h4>Available Items</h4>
+    </div>
+
+
+      <div class="cart">
+        <% for(var i=0; i<newListItems.length; i++) { %>
+          <div class="cart-item">
+            <div class="item-details">
+              <h3><%= newListItems[i].itemname %></h3>
+              <p>Quantity: <%= newListItems[i].quantity %></p>
+              <p>Price: <%= newListItems[i].price %></p>
+              <p>Id: <%= newListItems[i].itemid %></p>
+
+            </div>
+            <div class="item-actions">
+              <form id="cartForm" action="/click/<%= newListItems[i].itemid %>/number/<%=phonenumber%>" method="post">
+                <input type="hidden" name="itemId" value="<%= newListItems[i].itemid %>">
+                <button type="button" onclick="incrementNumber('<%=i%>')">+</button>
+                <span id="number<%=i%>">0</span>
+                <button type="button" onclick="decrementNumber('<%=i%>')">-</button>
+                <button type="submit" name="click" value="<%= newListItems[i].itemid %>">Add to Cart</button>
+              </form>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+    
+
+    <h1>Review</h1>
+    <form class="text-start" action="/review" method="post">
+      <div class="form-group">
+        <div class="mb-3">
+          <label for="" class="">Enter your review</label> 
+          <textarea name="reviewBody" class="form-control" cols="5" rows="4"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" name="review" value="Vasuki">Publish</button>
+    </form>
+
+    <br><br>
+    
+    <form class="text-start" action="/query" method="post">
+      <div class="form-group">
+        <div class="mb-3">
+          <label for="" class="">Query</label> 
+          <textarea name="queryBody" class="form-control" cols="5" rows="2" placeholder="Enter your query"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" name="query" value="Vasuki">Submit</button>
+    </form>
+
+    <form action="/usercart/<%=phonenumber%>" method="POST">
+      <button type="submit" name="UserCart" class="UserCart">Go To Cart</button> 
+    </form>
+    
+    <form action="/logout" method="get">
+      <button type="submit" name="signout"  class="signout">Sign Out</button>   
+    </form>
+      
+    <script>
+        function incrementNumber(index) {
+    // Get the current value from the span element
+    let currentNumber = parseInt(document.getElementById(`number${index}`).innerText);
+
+    // Convert the current value to a number and increment by 1
+    index = parseInt(index)
+    currentNumber = parseInt(currentNumber) + 1;
+
+    // Update the span element with the new value
+    document.getElementById(`number${index}`).innerText = currentNumber;
+    var formAction = document.getElementById("cartForm").action.replace('number', currentNumber);
+    document.getElementById("cartForm").action = formAction;
+  }
+
+
+  function decrementNumber(index){
+    let currentNumber = parseInt(document.getElementById(`number${index}`).innerText);
+
+    // Convert the current value to a number and increment by 1
+    index = parseInt(index)
+    currentNumber = parseInt(currentNumber) - 1;
+
+    // Update the span element with the new value
+    document.getElementById(`number${index}`).innerText = currentNumber;
+    var formAction = document.getElementById("cartForm").action.replace('number', currentNumber);
+    document.getElementById("cartForm").action = formAction;
+
+
+  }
+      </script>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>customer</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <input type="string" id="fname" name="user" value="Vasuki">
+
+    <div>
+      <h4>Available Items</h4>
+    </div>
+
+
+      <div class="cart">
+        <div id="arrayforcartitems" type="hidden"><%=newListItems%></div>
+        <% for(var i=0; i<newListItems.length; i++) { %>
+          <div class="cart-item">
+            <div class="item-details">
+              <h3><%= newListItems[i].itemname %></h3>
+              <p>Price: <%= newListItems[i].price %></p>
+              <p>Id: <%= newListItems[i].itemid %></p>
+              <p>Quantity he chose:<%=Number(newListItems[i].quantity)%></p>
+
+            </div>
+            <div class="item-actions">
+              <form id="cartForm" action="/clicktoRemove/<%= newListItems[i].itemid %>/<%=phonenumber%>" method="post">
+                <input type="hidden" name="itemId" value="<%= newListItems[i].itemid %>">
+                <button type="button" onclick="incrementNumber('<%=i%>')">+</button>
+                <span id="number<%=i%>"><%=Number(newListItems[i].quantity) %></span>
+                <button type="button" onclick="decrementNumber('<%=i%>')">-</button>
+                <button type="submit" name="click" value="<%= newListItems[i].itemid %>">Remove From Cart</button>
+              </form>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <form id="payment" action="/payment/<%=phonenumber%>" method="post">
+        <div>
+            <h5>Total amount to be paid</h5>
+
+            <h4 id="Amount"></h4>
+        </div>
+        <button type="submit" name="amount" value="<%=phonenumber%>">Proceed</button>
+      </form>
+
+    
+
+    <h1>Review</h1>
+    <form class="text-start" action="/review" method="post">
+      <div class="form-group">
+        <div class="mb-3">
+          <label for="" class="">Enter your review</label> 
+          <textarea name="reviewBody" class="form-control" cols="5" rows="4"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" name="review" value="Vasuki">Publish</button>
+    </form>
+
+    <br><br>
+    
+    <form class="text-start" action="/query" method="post">
+      <div class="form-group">
+        <div class="mb-3">
+          <label for="" class="">Query</label> 
+          <textarea name="queryBody" class="form-control" cols="5" rows="2" placeholder="Enter your query"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" name="query" value="Vasuki">Submit</button>
+    </form>
+
+    
+    <form action="/logout" method="get">
+      <button type="submit" name="signout"  class="signout">Sign Out</button>   
+    </form>     
+    <script>
+
+        
+    console.log(document.getElementById('arrayforcartitems').textContent)
+    var jsonString = document.getElementById('arrayforcartitems').textContent
+    jsonString = jsonString.replace(/new ObjectId\("([^"]+)"\)/g, '$1');
+    var dataArray = JSON.parse(jsonString);JSON.parse(jsonString)
+    dataArray.forEach(function(obj) {
+  delete obj._id;
+});
+console.log(jsonString)
+  
+
+
+
+var amount = Number(43);
+console.log(amount)
+console.log(jsonString);
+
+function incrementNumber(index) {
+    index = parseInt(index);
+    console.log(index)
+    let currentNumber = parseInt(document.getElementById(`number${index}`).innerText);
+    console.log(currentNumber)
+    currentNumber = parseInt(currentNumber) + 1;
+    document.getElementById(`number${index}`).innerText = currentNumber;
+    console.log("incremented")
+
+    updateFormActionAndAmount();
+}
+
+function decrementNumber(index) {
+    index = parseInt(index);
+    let currentNumber = parseInt(document.getElementById(`number${index}`).innerText);
+
+    // Ensure the number doesn't go below 0
+    if (currentNumber > 0) {
+        currentNumber = parseInt(currentNumber) - 1;
+        document.getElementById(`number${index}`).innerText = currentNumber;
+
+        updateFormActionAndAmount();
+    }
+}
+
+function updateFormActionAndAmount() {
+    let amount = Number(43);
+
+    for (var key in jsonString) {
+  if (jsonString.hasOwnProperty(key) && jsonString[key] && jsonString[key].hasOwnProperty('price')) {
+    amount += parseInt(jsonString[key].price) * parseInt(document.getElementById(`number${key}`).innerText);
+  } else {
+    console.error(`Invalid item with key '${key}'. Skipping.`);
+  }
+}
+
+    console.log(amount);
+    document.getElementById('Amount').innerText = amount;
+
+    // Assuming you want to update the form action with the total amount
+    var formAction = document.getElementById("cartForm").action.replace('number', amount);
+    document.getElementById("cartForm").action = formAction;
+}
+      </script>
+  </body>
+</html>
